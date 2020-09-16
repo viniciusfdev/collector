@@ -1,4 +1,8 @@
 from datetime import datetime
+from collections import OrderedDict
+
+#chave objeto da classe Domain, Valor - lista de URLs
+dicURLs = OrderedDict() 
 
 class Domain():
 	def __init__(self, nam_domain, int_time_limit_between_requests):
@@ -10,16 +14,18 @@ class Domain():
 		pass
 
 	def accessed_now(self):
+		
+		
 		pass
 
 	def is_accessible(self):
 		return False
 
 	def __hash__(self):
-		return None
+		return hash()
 
 	def __eq__(self, domain):
-		return None
+		return False
 
 	def __str__(self):
 		return self.nam_domain

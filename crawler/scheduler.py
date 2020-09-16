@@ -50,7 +50,10 @@ class Scheduler():
             Retorna verdadeiro caso  profundade for menor que a maxima
             e a url não foi descoberta ainda
         """
-        return False
+        if(int_depth<self.int_depth_limit and obj_url in self.dic_url_per_domain): #verificar se nao foi descoberta
+            return True
+        else:
+            return False
 
     @synchronized
     def add_new_page(self,obj_url,int_depth):
@@ -61,7 +64,12 @@ class Scheduler():
         """
         #https://docs.python.org/3/library/urllib.parse.html
 
-        return False
+        if(self.can_add_page(obj_url,int_depth)):
+            self.dic_url_per_domain[int_depth]=obj_url #nao sei se ta compativel com o exemplo, mas creio que a chave e a profundidade e o valor e a url
+                                                       #o exemplo parece que a chave e uma tupla(url, profundidade) e o valor e uma lista de tuplas(url,profundidade)
+         
+        else:
+            return False
 
 
 
