@@ -1,4 +1,5 @@
 from urllib import robotparser
+from urllib.parse import urlparse
 from util.threads import synchronized
 from collections import OrderedDict
 from .domain import Domain
@@ -56,7 +57,7 @@ class Scheduler():
             return True
 
     @synchronized
-    def add_new_page(self, obj_url, int_depth, domain):
+    def add_new_page(self, obj_url, int_depth):
         """
             Adiciona uma nova página
             obj_url: Objeto da classe ParseResult com a URL a ser adicionada
@@ -64,9 +65,12 @@ class Scheduler():
         """
         #https://docs.python.org/3/library/urllib.parse.html
 
-        # url per domain not per deph
+        domain = urlparse(obj_url).hostname
+        
         if self.can_add_page(obj_url, int_depth):
-            self.dic_url_per_domain[domain] = obj_url
+            if domain in self.dic_url_per_domain:
+                self.dic_url_per_domain[domain] = []
+            self.dic_url_per_domain[domain].add(obj_url)
 
             # Não esqueça de armazenar que esta URL já foi descoberta. ???
             # self.set_discovered_urls.add(obj_url)
