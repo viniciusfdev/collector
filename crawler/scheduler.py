@@ -108,11 +108,16 @@ class Scheduler():
 
         return url_depth
 
-    def can_fetch_page(self,obj_url):
+    def can_fetch_page(self, obj_url):
         """
         Verifica, por meio do robots.txt se uma determinada URL pode ser coletada
         """
+        answer = False
+        for domain in self.dic_url_per_domain:
+            if obj_url in domain:
+                parser = robotparser.RobotFileParser(self.dic_robots_per_domain[obj_url])
+                parser.read()
+                answer = parser.can_fetch(self.str_usr_agent, obj_url)
+                break
 
-
-
-        return False
+        return answer
