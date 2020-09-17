@@ -45,18 +45,18 @@ class Scheduler():
 
 
     @synchronized
-    def can_add_page(self,obj_url,int_depth):
+    def can_add_page(self, obj_url, int_depth):
         """
             Retorna verdadeiro caso  profundade for menor que a maxima
             e a url não foi descoberta ainda
         """
-        if(int_depth<self.int_depth_limit and obj_url in self.dic_url_per_domain): #verificar se nao foi descoberta
-            return True
-        else:
+        if int_depth >= self.int_depth_limit or obj_url in self.set_discovered_urls:
             return False
+        else:
+            return True
 
     @synchronized
-    def add_new_page(self,obj_url,int_depth):
+    def add_new_page(self, obj_url, int_depth, domain):
         """
             Adiciona uma nova página
             obj_url: Objeto da classe ParseResult com a URL a ser adicionada
@@ -64,17 +64,16 @@ class Scheduler():
         """
         #https://docs.python.org/3/library/urllib.parse.html
 
-        if(self.can_add_page(obj_url,int_depth)):
-            self.dic_url_per_domain[int_depth]=obj_url #nao sei se ta compativel com o exemplo, mas creio que a chave e a profundidade e o valor e a url
-                                                       #o exemplo parece que a chave e uma tupla(url, profundidade) e o valor e uma lista de tuplas(url,profundidade)
-         
+        # url per domain not per deph
+        if self.can_add_page(obj_url, int_depth):
+            self.dic_url_per_domain[domain] = obj_url
+
+            # Não esqueça de armazenar que esta URL já foi descoberta. ???
+            # self.set_discovered_urls.add(obj_url)
+
+            return True         
         else:
             return False
-
-
-
-
-
 
 
     @synchronized
