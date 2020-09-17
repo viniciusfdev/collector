@@ -2,6 +2,7 @@ from urllib import robotparser
 from util.threads import synchronized
 from collections import OrderedDict
 from .domain import Domain
+import time
 
 class Scheduler():
     #tempo (em segundos) entre as requisições
@@ -75,7 +76,26 @@ class Scheduler():
         Obtem uma nova URL por meio da fila. Essa URL é removida da fila.
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
-        return None,None
+        domainsToRemove = []
+        url_depth = (None, None)
+        for domain in self.dic_url_per_domain:
+            if domain.is_accessible():
+                if self.dic_url_per_domain[domain]:
+                    domainsToRemove.append(domain)
+                    continue
+                domain.accessed_now()
+                domainsToRemove.append(domain)
+                url_depth = self.dic_url_per_domain[domain][0]
+                break
+                
+        for domain in domainsToRemove:
+            del self.dic_url_per_domain[domain]
+
+        if url_depth == (None, None):
+            time.sleep(10)
+            url_depth = self.get_next_url()
+
+        return url_depth
 
     def can_fetch_page(self,obj_url):
         """
