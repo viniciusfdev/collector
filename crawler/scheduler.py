@@ -65,12 +65,12 @@ class Scheduler():
         """
         #https://docs.python.org/3/library/urllib.parse.html
 
-        domain = urlparse(obj_url).hostname
+        domain = urlparse(obj_url)
         
         if self.can_add_page(obj_url, int_depth):
             if domain in self.dic_url_per_domain:
                 self.dic_url_per_domain[domain] = []
-            self.dic_url_per_domain[domain].add(obj_url)
+            self.dic_url_per_domain[domain].add((urlparse(obj_url), int_depth))
 
             # Não esqueça de armazenar que esta URL já foi descoberta. ???
             # self.set_discovered_urls.add(obj_url)
