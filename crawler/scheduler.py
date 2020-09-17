@@ -20,10 +20,6 @@ class Scheduler():
                 - `set_discovered_urls`: Conjunto de URLs descobertas, ou seja, que foi extraída em algum HTML e já adicionadas na fila - mesmo se já ela foi retirada da fila. A URL armazenada deve ser uma string.
                 - `dic_robots_per_domain`: Dicionário armazenando, para cada domínio, o objeto representando as regras obtidas no `robots.txt`
         """
-        from platform import python_version
-
-        print(python_version())
-
         self.str_usr_agent = str_usr_agent
         self.int_page_limit = int_page_limit
         self.int_depth_limit = int_depth_limit
@@ -68,17 +64,13 @@ class Scheduler():
             obj_url: Objeto da classe ParseResult com a URL a ser adicionada
             int_depth: Profundidade na qual foi coletada essa URL
         """
-        #https://docs.python.org/3/library/urllib.parse.html
-
-        domain = urlparse(obj_url)
-        
+        domain = obj_url.hostname
         if self.can_add_page(obj_url, int_depth):
-            if domain in self.dic_url_per_domain:
-                self.dic_url_per_domain[domain] = []
-            self.dic_url_per_domain[domain].add((urlparse(obj_url), int_depth))
+            if not domain in self.dic_url_per_domain:
+                self.dic_url_per_domain[Domain(domain, int_depth)] = []
 
-            # Não esqueça de armazenar que esta URL já foi descoberta. ???
-            # self.set_discovered_urls.add(obj_url)
+            self.dic_url_per_domain[domain].append((obj_url, int_depth))
+            self.set_discovered_urls.add(obj_url)
 
             return True         
         else:
@@ -91,11 +83,16 @@ class Scheduler():
         Obtem uma nova URL por meio da fila. Essa URL é removida da fila.
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
+        print("getting next")
+
         domainsToRemove = []
         url_depth = (None, None)
         for domain in self.dic_url_per_domain:
+            print(domain)
             if domain.is_accessible():
-                if self.dic_url_per_domain[domain]:
+                print("is accessible")
+                if not self.dic_url_per_domain[domain]:
+                    print("is empty")
                     domainsToRemove.append(domain)
                     continue
                 domain.accessed_now()
@@ -106,9 +103,10 @@ class Scheduler():
         for domain in domainsToRemove:
             del self.dic_url_per_domain[domain]
 
+        print(url_depth)
         if url_depth == (None, None):
-            time.sleep(10)
-            url_depth = self.get_next_url()
+            time.sleep(1)
+            #url_depth = self.get_next_url()
 
         return url_depth
 
