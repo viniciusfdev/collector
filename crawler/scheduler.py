@@ -20,6 +20,10 @@ class Scheduler():
                 - `set_discovered_urls`: Conjunto de URLs descobertas, ou seja, que foi extraída em algum HTML e já adicionadas na fila - mesmo se já ela foi retirada da fila. A URL armazenada deve ser uma string.
                 - `dic_robots_per_domain`: Dicionário armazenando, para cada domínio, o objeto representando as regras obtidas no `robots.txt`
         """
+        from platform import python_version
+
+        print(python_version())
+
         self.str_usr_agent = str_usr_agent
         self.int_page_limit = int_page_limit
         self.int_depth_limit = int_depth_limit
