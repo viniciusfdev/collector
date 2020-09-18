@@ -83,7 +83,6 @@ class SchedulerTest(unittest.TestCase):
 
         bol_not_allowed = self.scheduler.can_fetch_page(obj_url_not_allowed)
         bol_allowed = self.scheduler.can_fetch_page(obj_url_allowed)
-
         obj_robot_not_allowed = self.scheduler.dic_robots_per_domain[obj_url_not_allowed.netloc]
 
         #verifica se, nas requisições, o robot retornou a resposta correta

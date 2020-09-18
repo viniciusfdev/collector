@@ -7,7 +7,8 @@ import time
 
 class Scheduler():
     #tempo (em segundos) entre as requisições
-    TIME_LIMIT_BETWEEN_REQUESTS = 20
+    # tempo 20 ou 10
+    TIME_LIMIT_BETWEEN_REQUESTS = 10
 
     def __init__(self,str_usr_agent,int_page_limit,int_depth_limit,arr_urls_seeds):
         """
@@ -76,37 +77,38 @@ class Scheduler():
         else:
             return False
 
-
-    @synchronized
+    # @synchronized
     def get_next_url(self):
         """
         Obtem uma nova URL por meio da fila. Essa URL é removida da fila.
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
-        print("getting next")
 
         domainsToRemove = []
-        url_depth = (None, None)
+        urlToRemove = None
+        url_depth = None
         for domain in self.dic_url_per_domain:
-            print(domain)
             if domain.is_accessible():
-                print("is accessible")
                 if not self.dic_url_per_domain[domain]:
-                    print("is empty")
                     domainsToRemove.append(domain)
                     continue
                 domain.accessed_now()
-                domainsToRemove.append(domain)
-                url_depth = self.dic_url_per_domain[domain][0]
+                urlToRemove = domain
                 break
-                
+        
+        # remove empty domains
         for domain in domainsToRemove:
             del self.dic_url_per_domain[domain]
 
+        # remove url
+        if urlToRemove:
+            url_depth = self.dic_url_per_domain[urlToRemove][0]
+  
+        # wait and call next url again if no url is provided
         print(url_depth)
-        if url_depth == (None, None):
-            time.sleep(1)
-            #url_depth = self.get_next_url()
+        if not url_depth:
+            time.sleep(5)
+            url_depth = self.get_next_url()
 
         return url_depth
 
@@ -114,12 +116,21 @@ class Scheduler():
         """
         Verifica, por meio do robots.txt se uma determinada URL pode ser coletada
         """
-        answer = False
-        for domain in self.dic_url_per_domain:
-            if obj_url in domain:
-                parser = robotparser.RobotFileParser(self.dic_robots_per_domain[obj_url])
-                parser.read()
-                answer = parser.can_fetch(self.str_usr_agent, obj_url)
-                break
+        parser = robotparser.RobotFileParser(obj_url.geturl())
+        parser.read()
+        answer = parser.can_fetch(self.str_usr_agent, obj_url)
+        print(answer)
+
+        # for domain in self.dic_robots_per_domain:
+        #     print(domain)
+        #     for url_depth in domain:
+        #         if obj_url in url_depth:
+        #             print(self.dic_robots_per_domain[domain])
+        #             parser = robotparser.RobotFileParser(self.dic_robots_per_domain[domain])
+        #             print("")
+        #             parser.read()
+        #             print("sdada")
+        #             answer = parser.can_fetch(self.str_usr_agent, obj_url)
+        #             break
 
         return answer
