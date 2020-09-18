@@ -97,9 +97,6 @@ class SchedulerTest(unittest.TestCase):
         self.scheduler.can_fetch_page(obj_url_not_allowed)
         self.assertTrue(obj_robot_not_allowed==self.scheduler.dic_robots_per_domain[obj_url_not_allowed.netloc], "Na segunda requisição de um mesmo dominio, você não pode criar um novo objeto RobotFileParser")
 
-
-
-
         self.assertTrue(bol_allowed,f"O mesmo robots.txt não pode ser requisitado duas vezes.")
 
 

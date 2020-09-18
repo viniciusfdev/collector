@@ -68,7 +68,7 @@ class Scheduler():
         domain = obj_url.hostname
         if self.can_add_page(obj_url, int_depth):
             if not domain in self.dic_url_per_domain:
-                self.dic_url_per_domain[Domain(domain, int_depth)] = []
+                self.dic_url_per_domain[Domain(domain, self.TIME_LIMIT_BETWEEN_REQUESTS)] = []
 
             self.dic_url_per_domain[domain].append((obj_url, int_depth))
             self.set_discovered_urls.add(obj_url)
@@ -83,7 +83,6 @@ class Scheduler():
         Obtem uma nova URL por meio da fila. Essa URL é removida da fila.
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
-
         domainsToRemove = []
         urlToRemove = None
         url_depth = None
@@ -116,21 +115,16 @@ class Scheduler():
         """
         Verifica, por meio do robots.txt se uma determinada URL pode ser coletada
         """
-        parser = robotparser.RobotFileParser(obj_url.geturl())
-        parser.read()
-        answer = parser.can_fetch(self.str_usr_agent, obj_url)
-        print(answer)
-
-        # for domain in self.dic_robots_per_domain:
-        #     print(domain)
-        #     for url_depth in domain:
-        #         if obj_url in url_depth:
-        #             print(self.dic_robots_per_domain[domain])
-        #             parser = robotparser.RobotFileParser(self.dic_robots_per_domain[domain])
-        #             print("")
-        #             parser.read()
-        #             print("sdada")
-        #             answer = parser.can_fetch(self.str_usr_agent, obj_url)
-        #             break
-
+        answer = False
+        
+        if not obj_url.netloc in self.dic_robots_per_domain:
+            parser = robotparser.RobotFileParser()
+            parser.set_url(obj_url.geturl())
+            parser.read()
+            answer = parser.can_fetch(self.str_usr_agent, obj_url.geturl())
+            print(answer)
+            self.dic_robots_per_domain[
+                Domain(obj_url.netloc, self.TIME_LIMIT_BETWEEN_REQUESTS)] = parser
+            
+            
         return answer
