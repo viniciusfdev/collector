@@ -7,17 +7,23 @@ class PageFetcher(Thread):
     def __init__(self, obj_scheduler):
         self.obj_scheduler = obj_scheduler
 
-
-
-
-    def request_url(self,obj_url):
+    def request_url(self, obj_url):
         """
             Faz a requisição e retorna o conteúdo em binário da URL passada como parametro
 
             obj_url: Instancia da classe ParseResult com a URL a ser requisitada.
         """
-        response = None
-
+        url_resp = obj_url.geturl()
+        print(url_resp)
+        headers = {'user-agent': self.obj_scheduler.str_usr_agent}
+        request = requests.get(url_resp, headers = headers)
+        content = request.headers['content-type']
+        
+        if "html" in content:
+            response = request
+            return response.content
+        else:
+            return None
 
         return response.content
 
