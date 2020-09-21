@@ -14,7 +14,6 @@ class PageFetcher(Thread):
             obj_url: Instancia da classe ParseResult com a URL a ser requisitada.
         """
         url_resp = obj_url.geturl()
-        print(url_resp)
         headers = {'user-agent': self.obj_scheduler.str_usr_agent}
         request = requests.get(url_resp, headers = headers)
         content = request.headers['content-type']

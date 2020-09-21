@@ -29,6 +29,7 @@ class Scheduler():
         self.dic_url_per_domain = OrderedDict()
         self.set_discovered_urls = set()
         self.dic_robots_per_domain = {}
+        self.arr_urls_seeds = arr_urls_seeds 
 
 
     @synchronized
@@ -104,7 +105,6 @@ class Scheduler():
             url_depth = self.dic_url_per_domain[urlToRemove][0]
   
         # wait and call next url again if no url is provided
-        print(url_depth)
         if not url_depth:
             time.sleep(5)
             url_depth = self.get_next_url()
@@ -122,7 +122,6 @@ class Scheduler():
             parser.set_url(obj_url.geturl())
             parser.read()
             answer = parser.can_fetch(self.str_usr_agent, obj_url.geturl())
-            print(answer)
             self.dic_robots_per_domain[
                 Domain(obj_url.netloc, self.TIME_LIMIT_BETWEEN_REQUESTS)] = parser
             
