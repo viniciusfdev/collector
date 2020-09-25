@@ -78,36 +78,38 @@ class Scheduler():
         else:
             return False
 
-    # @synchronized
+    @synchronized
     def get_next_url(self):
         """
         Obtem uma nova URL por meio da fila. Essa URL é removida da fila.
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
-        domainsToRemove = []
-        urlToRemove = None
-        url_depth = None
-        for domain in self.dic_url_per_domain:
-            if domain.is_accessible():
-                if not self.dic_url_per_domain[domain]:
-                    domainsToRemove.append(domain)
-                    continue
-                domain.accessed_now()
-                urlToRemove = domain
-                break
-        
-        # remove empty domains
-        for domain in domainsToRemove:
-            del self.dic_url_per_domain[domain]
+        while(True):
+            domainsToRemove = []
+            urlToRemove = None
+            url_depth = None
+            for domain in self.dic_url_per_domain:
+                if domain.is_accessible():
+                    if not self.dic_url_per_domain[domain]:
+                        domainsToRemove.append(domain)
+                        continue
+                    domain.accessed_now()
+                    urlToRemove = domain
+                    break
+            
+            # remove empty domains
+            for domain in domainsToRemove:
+                del self.dic_url_per_domain[domain]
 
-        # remove url
-        if urlToRemove:
-            url_depth = self.dic_url_per_domain[urlToRemove][0]
-  
-        # wait and call next url again if no url is provided
-        if not url_depth:
-            time.sleep(5)
-            url_depth = self.get_next_url()
+            # remove url
+            if urlToRemove:
+                url_depth = self.dic_url_per_domain[urlToRemove][0]
+    
+            # wait and call next url again if no url is provided
+            if not url_depth:
+                time.sleep(5)
+            else:
+                break
 
         return url_depth
 
