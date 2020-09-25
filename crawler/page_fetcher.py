@@ -49,10 +49,15 @@ class PageFetcher(Thread):
         """
             Coleta uma nova URL, obtendo-a do escalonador
         """
-        pass
+        url = self.obj_scheduler.get_next_url()
+        html = self.request_url(url[0])
+        urls = self.discover_links(url, 0, html)
+        return True
+
 
     def run(self):
         """
             Executa coleta enquanto houver páginas a serem coletadas
         """
+        
         pass

@@ -37,5 +37,19 @@ class PageFetcherTest(unittest.TestCase):
             self.assertEqual(arr_expected_links[i][0].geturl(),url_link.geturl(),f"A {i}ª URL extraída seria {arr_expected_links[i][0].geturl()} e não {url_link.geturl()}")
             self.assertEqual(arr_expected_links[i][1],depth,f"A profundiade da URL {arr_expected_links[i][0].geturl()} seria {arr_expected_links[i][1]} e não {depth}")
 
+    def test_10(self):
+        urlProf = (urlparse("http://www.xpto.com.br/index.html"),100000)
+        urlTerra = (urlparse("http://www.terra.com.br/index.html"), 1)
+        urlTerraRep = (urlparse("http://www.terra.com.br/index.html"), 1)
+        urlUOL1 = (urlparse("http://www.uol.com.br/"), 1)
+        urlUOL2 = (urlparse("http://www.uol.com.br/profMax.html"), 1)
+        urlGlobo = (urlparse("http://www.globo.com.br/profMax.html"), 1)
+        arr_urls = [urlProf,urlTerra,urlTerraRep,urlUOL1,urlUOL2,urlGlobo]
+
+        [self.scheduler.add_new_page(*url) for url in arr_urls]
+
+        self.assertEqual(self.fetcher.crawl_new_url(), True)
+
+
 if __name__ == "__main__":
     unittest.main()

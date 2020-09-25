@@ -84,6 +84,11 @@ class Scheduler():
         Obtem uma nova URL por meio da fila. Essa URL é removida da fila.
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
+
+        # returna null se a lista de dominios estiver vazia
+        if not self.dic_url_per_domain:
+            return None
+
         while(True):
             domainsToRemove = []
             urlToRemove = None
