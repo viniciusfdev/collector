@@ -26,15 +26,23 @@ class PageFetcher(Thread):
 
         return response.content
 
-    def discover_links(self,obj_url,int_depth,bin_str_content):
+    def discover_links(self, obj_url, int_depth, bin_str_content):
         """
         Retorna os links do conteúdo bin_str_content da página já requisitada obj_url
         """
-        soup = BeautifulSoup(bin_str_content,features="lxml")
-        for link in soup.select(None):
-            obj_new_url = None
-            int_new_depth = None
-
+        soup = BeautifulSoup(bin_str_content, features="lxml")
+        for link in soup.select('a'):
+            url = link["href"]
+            if not "http" in url:
+                url = obj_url.geturl() + "/" + url
+            
+            obj_new_url = urlparse(url)
+            
+            if not obj_url.netloc in url:
+                int_depth = -1
+            
+            int_new_depth = int_depth + 1
+            
             yield obj_new_url,int_new_depth
 
     def crawl_new_url(self):
