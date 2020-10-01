@@ -60,13 +60,13 @@ class Scheduler():
             return True
 
     @synchronized
-    def add_new_page(self, obj_url, int_depth):
+    def add_new_page(self, obj_url, int_depth = 0):
         """
             Adiciona uma nova página
             obj_url: Objeto da classe ParseResult com a URL a ser adicionada
             int_depth: Profundidade na qual foi coletada essa URL
         """
-        domain = obj_url.hostname
+        domain = obj_url.netloc
         if self.can_add_page(obj_url, int_depth):
             if not domain in self.dic_url_per_domain:
                 self.dic_url_per_domain[Domain(domain, self.TIME_LIMIT_BETWEEN_REQUESTS)] = []
@@ -74,7 +74,7 @@ class Scheduler():
             self.dic_url_per_domain[domain].append((obj_url, int_depth))
             self.set_discovered_urls.add(obj_url)
 
-            return True         
+            return True
         else:
             return False
 
@@ -104,7 +104,11 @@ class Scheduler():
             
             # remove empty domains
             for domain in domainsToRemove:
+                print("deleting domain:")
+                print(domain)
                 del self.dic_url_per_domain[domain]
+
+            print(urlToRemove)
 
             # remove url
             if urlToRemove:

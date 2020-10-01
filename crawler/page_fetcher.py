@@ -32,7 +32,11 @@ class PageFetcher(Thread):
         """
         soup = BeautifulSoup(bin_str_content, features="lxml")
         for link in soup.select('a'):
-            url = link["href"]
+            try:
+                url = link["href"]
+            except:
+                url = ""
+
             if not "http" in url:
                 url = obj_url.geturl() + "/" + url
             
@@ -50,14 +54,27 @@ class PageFetcher(Thread):
             Coleta uma nova URL, obtendo-a do escalonador
         """
         url = self.obj_scheduler.get_next_url()
-        html = self.request_url(url[0])
-        urls = self.discover_links(url, 0, html)
-        return True
 
+        if url == None:
+            return;
+
+        html = self.request_url(url[0])
+        urls = self.discover_links(url[0], url[1], html)
+        
+        print("Origin url:")
+        print(url[0].netloc)
+        print("Discovered urls:")
+        for index, (url_link, depth) in enumerate(urls):
+            if (url_link != None):
+                print(url_link.netloc + ": " + str(depth))
 
     def run(self):
         """
             Executa coleta enquanto houver páginas a serem coletadas
         """
+        [self.obj_scheduler.add_new_page(url) for url in self.obj_scheduler.arr_urls_seeds]
+
+        while self.obj_scheduler.dic_url_per_domain:
+            print("START NEW URL SEARCH")
+            self.crawl_new_url()
         
-        pass
