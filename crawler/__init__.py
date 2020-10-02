@@ -21,7 +21,20 @@ if __name__ == "__main__":
         "https://www.ig.com.br/",
         "https://www.portaldoholanda.com.br/",
         "https://www.gazetadopovo.com.br/",
-        "https://www.naosalvo.com.br/"
+        "https://www.naosalvo.com.br/",
+        "https://www.Facebook.com",
+        "https://www.Baidu.com",
+        "https://www.Wikipedia.org",
+        "https://www.Yahoo.com",
+        "https://www.Qq.com",
+        "https://www.Taobao.com",
+        "https://www.Twitter.com",
+        "https://www.Amazon.com",
+        "https://www.Google.co.jp",
+        "https://www.Tmall.com",
+        "https://www.Vk.com",
+        "https://www.Sohu.com",
+        "https://www.Weibo.com"
     ]
 
 
