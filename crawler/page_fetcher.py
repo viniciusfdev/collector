@@ -4,7 +4,9 @@ import requests
 from urllib.parse import urlparse,urljoin
 
 class PageFetcher(Thread):
-    def __init__(self, obj_scheduler):
+    def __init__(self, obj_scheduler, id):
+        super(PageFetcher, self).__init__()
+        self.id = id
         self.obj_scheduler = obj_scheduler
 
     def request_url(self, obj_url):
@@ -30,43 +32,50 @@ class PageFetcher(Thread):
         """
         Retorna os links do conteúdo bin_str_content da página já requisitada obj_url
         """
+
         soup = BeautifulSoup(bin_str_content, features="lxml")
         for link in soup.select('a'):
-            try:
+            _int_depth = int_depth
+            url = ""
+            if link.get("href"):
                 url = link["href"]
-            except:
-                url = ""
-
+                
             if not "http" in url:
                 url = obj_url.geturl() + "/" + url
             
             obj_new_url = urlparse(url)
             
             if not obj_url.netloc in url:
-                int_depth = -1
+                _int_depth = _int_depth + 1
             
-            int_new_depth = int_depth + 1
-            
-            yield obj_new_url,int_new_depth
+
+            yield obj_new_url, _int_depth
 
     def crawl_new_url(self):
         """
             Coleta uma nova URL, obtendo-a do escalonador
         """
         url = self.obj_scheduler.get_next_url()
-
+        
         if url == None:
-            return;
+            return
 
         html = self.request_url(url[0])
         urls = self.discover_links(url[0], url[1], html)
         
-        print("Origin url:")
-        print(url[0].netloc)
-        print("Discovered urls:")
-        for index, (url_link, depth) in enumerate(urls):
+        links = []
+        auxLinks = []
+        for _url in urls:
+            if not _url[0].netloc in auxLinks:
+                auxLinks.append(_url[0].netloc)
+                links.append(_url)
+        
+        print(str(self.id) + ": Origin url: " + url[0].netloc)
+        print(str(self.id) + ": Discovered urls:")
+
+        for index, (url_link, depth) in enumerate(links):
             if (url_link != None):
-                print(url_link.netloc + ": " + str(depth))
+                print(str(self.id) + ": " + url_link.netloc + ": " + str(depth))
 
     def run(self):
         """
@@ -74,7 +83,9 @@ class PageFetcher(Thread):
         """
         [self.obj_scheduler.add_new_page(url) for url in self.obj_scheduler.arr_urls_seeds]
 
-        while self.obj_scheduler.dic_url_per_domain:
-            print("START NEW URL SEARCH")
+        while not self.obj_scheduler.has_finished_crawl():
+            print("START NEW URL SEARCH " + str(self.id))
             self.crawl_new_url()
+            self.obj_scheduler.count_fetched_page()
+        
         

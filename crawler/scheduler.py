@@ -39,6 +39,7 @@ class Scheduler():
         """
         self.int_page_count += 1
 
+    @synchronized
     def has_finished_crawl(self):
         """
             Verifica se finalizou a coleta
@@ -108,8 +109,6 @@ class Scheduler():
                 print(domain)
                 del self.dic_url_per_domain[domain]
 
-            print(urlToRemove)
-
             # remove url
             if urlToRemove:
                 url_depth = self.dic_url_per_domain[urlToRemove][0]
@@ -122,6 +121,7 @@ class Scheduler():
 
         return url_depth
 
+    @synchronized
     def can_fetch_page(self, obj_url):
         """
         Verifica, por meio do robots.txt se uma determinada URL pode ser coletada
