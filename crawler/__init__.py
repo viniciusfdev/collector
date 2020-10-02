@@ -41,14 +41,13 @@ if __name__ == "__main__":
     arr_urls_seeds = [urlparse(str_url) for str_url in arr_urls_seeds]
     
     scheduler = Scheduler(str_usr_agent="vinigorbot",
-                                int_page_limit=10,
+                                int_page_limit=500,
                                 int_depth_limit=3,
                                 arr_urls_seeds=arr_urls_seeds)
-
    
     fetchers = []
 
-    for id in range(5):
+    for id in range(10):
         fetchers.append(PageFetcher(scheduler, id))
         fetchers[id].start()
         

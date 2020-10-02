@@ -46,7 +46,9 @@ class PageFetcher(Thread):
             obj_new_url = urlparse(url)
             
             if not obj_url.netloc in url:
-                _int_depth = _int_depth + 1
+                _int_depth = int_depth + 1
+            else:
+                _int_depth = 0
             
 
             yield obj_new_url, _int_depth
@@ -76,6 +78,8 @@ class PageFetcher(Thread):
         for index, (url_link, depth) in enumerate(links):
             if (url_link != None):
                 print(str(self.id) + ": " + url_link.netloc + ": " + str(depth))
+                self.obj_scheduler.add_new_page(url_link, depth)
+
 
     def run(self):
         """

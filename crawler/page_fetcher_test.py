@@ -11,7 +11,7 @@ class PageFetcherTest(unittest.TestCase):
                                 int_page_limit=10,
                                 int_depth_limit=3,
                                 arr_urls_seeds=arr_urls_seeds)
-        self.fetcher = PageFetcher(self.scheduler)
+        self.fetcher = PageFetcher(self.scheduler, 0)
 
     def test_request_url(self):
         obj_url_google = urlparse("http://www.google.com.br")
