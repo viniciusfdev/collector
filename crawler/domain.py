@@ -5,10 +5,10 @@ from datetime import datetime
 dicURLs = OrderedDict() 
 
 class Domain():
-	def __init__(self, nam_domain, int_time_limit_between_requests):
+	def __init__(self, nam_domain, int_time_limit_seconds):
 		self.time_last_access = datetime(1970,1,1)
 		self.nam_domain = nam_domain
-		self.int_time_limit_seconds  = int_time_limit_between_requests
+		self.int_time_limit_seconds  = int_time_limit_seconds
 	@property
 	def time_since_last_access(self):
 		return abs((datetime.now() - self.time_last_access).seconds)
@@ -17,7 +17,7 @@ class Domain():
 		self.time_last_access = datetime.now()
 
 	def is_accessible(self):
-		if self.time_since_last_access >= 10:
+		if self.time_since_last_access >= self.int_time_limit_seconds:
 			return True
 		return False
 

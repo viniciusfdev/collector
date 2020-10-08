@@ -58,4 +58,4 @@ if __name__ == "__main__":
     for fetcher in fetchers:
         fetcher.join()
     
-    print("Tempo final de execução: {} mS".format((datetime.now() - d_initial_time).microseconds))
+    print("Tempo final de execução: {} mS".format((datetime.now() - d_initial_time).seconds))
