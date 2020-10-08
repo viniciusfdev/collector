@@ -1,5 +1,5 @@
-from datetime import datetime
 from collections import OrderedDict
+from datetime import datetime
 
 #chave objeto da classe Domain, Valor - lista de URLs
 dicURLs = OrderedDict() 

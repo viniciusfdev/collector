@@ -11,7 +11,7 @@ class PageFetcherTest(unittest.TestCase):
                                 int_page_limit=10,
                                 int_depth_limit=3,
                                 arr_urls_seeds=arr_urls_seeds)
-        self.fetcher = PageFetcher(self.scheduler, 0)
+        self.fetcher = PageFetcher(self.scheduler)
 
     def test_request_url(self):
         obj_url_google = urlparse("http://www.google.com.br")
@@ -38,16 +38,9 @@ class PageFetcherTest(unittest.TestCase):
             self.assertEqual(arr_expected_links[i][1],depth,f"A profundiade da URL {arr_expected_links[i][0].geturl()} seria {arr_expected_links[i][1]} e não {depth}")
 
     def test_10(self):
-        urlProf = (urlparse("http://www.xpto.com.br/index.html"),100000)
-        urlTerra = (urlparse("http://www.terra.com.br/index.html"), 1)
-        urlTerraRep = (urlparse("http://www.terra.com.br/index.html"), 1)
-        urlUOL1 = (urlparse("http://www.uol.com.br/"), 1)
-        urlUOL2 = (urlparse("http://www.uol.com.br/profMax.html"), 1)
-        urlGlobo = (urlparse("http://www.globo.com.br/profMax.html"), 1)
-        arr_urls = [urlProf,urlTerra,urlTerraRep,urlUOL1,urlUOL2,urlGlobo]
-
-        [self.scheduler.add_new_page(*url) for url in arr_urls]
-
+        urlProf = urlparse("http://www.xpto.com.br/index.html")
+        arr_urls = [urlProf]
+        [self.scheduler.add_new_page(url) for url in arr_urls]
         self.assertEqual(self.fetcher.crawl_new_url(), True)
 
 

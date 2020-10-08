@@ -4,9 +4,8 @@ import requests
 from urllib.parse import urlparse,urljoin
 
 class PageFetcher(Thread):
-    def __init__(self, obj_scheduler, id):
+    def __init__(self, obj_scheduler):
         super(PageFetcher, self).__init__()
-        self.id = id
         self.obj_scheduler = obj_scheduler
 
     def request_url(self, obj_url):
@@ -46,9 +45,9 @@ class PageFetcher(Thread):
             obj_new_url = urlparse(url)
             
             if not obj_url.netloc in url:
-                _int_depth = int_depth + 1
-            else:
                 _int_depth = 0
+            else:
+                _int_depth = int_depth + 1
             
 
             yield obj_new_url, _int_depth
@@ -58,7 +57,7 @@ class PageFetcher(Thread):
             Coleta uma nova URL, obtendo-a do escalonador
         """
         url = self.obj_scheduler.get_next_url()
-        
+
         if url == None:
             return
 
@@ -72,13 +71,12 @@ class PageFetcher(Thread):
                 auxLinks.append(_url[0].netloc)
                 links.append(_url)
         
-        print(str(self.id) + ": Origin url: " + url[0].netloc)
-        print(str(self.id) + ": Discovered urls:")
-
         for index, (url_link, depth) in enumerate(links):
             if (url_link != None):
-                print(str(self.id) + ": " + url_link.netloc + ": " + str(depth))
+                print(": " + url_link.netloc + ": " + str(depth))
                 self.obj_scheduler.add_new_page(url_link, depth)
+        
+        return True
 
 
     def run(self):
@@ -88,7 +86,7 @@ class PageFetcher(Thread):
         [self.obj_scheduler.add_new_page(url) for url in self.obj_scheduler.arr_urls_seeds]
 
         while not self.obj_scheduler.has_finished_crawl():
-            print("START NEW URL SEARCH " + str(self.id))
+            print("START NEW URL SEARCH!")
             self.crawl_new_url()
             self.obj_scheduler.count_fetched_page()
         
