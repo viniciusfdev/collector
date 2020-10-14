@@ -3,11 +3,9 @@ from urllib.parse import urlparse
 from util.threads import synchronized
 from collections import OrderedDict
 from .domain import Domain
-import time
 
 class Scheduler():
     #tempo (em segundos) entre as requisições
-    # tempo 20 ou 10
     TIME_LIMIT_BETWEEN_REQUESTS = 10
 
     def __init__(self,str_usr_agent,int_page_limit,int_depth_limit,arr_urls_seeds):
@@ -90,34 +88,31 @@ class Scheduler():
         if not self.dic_url_per_domain:
             return None
 
-        while(True):
-            domainsToRemove = []
-            urlToRemove = None
-            url_depth = None
-            for domain in self.dic_url_per_domain:
-                if domain.is_accessible():
-                    if not self.dic_url_per_domain[domain]:
-                        domainsToRemove.append(domain)
-                        continue
-                    domain.accessed_now()
-                    urlToRemove = domain
-                    break
-            
-            # remove empty domains
-            for domain in domainsToRemove:
-                print("deleting domain:")
-                print(domain)
-                del self.dic_url_per_domain[domain]
-
-            # remove url
-            if urlToRemove:
-                url_depth = self.dic_url_per_domain[urlToRemove][0]
-    
-            # wait and call next url again if no url is provided
-            if not url_depth:
-                time.sleep(5)
-            else:
+        # while(True): a função nao mais espera dentro de si mesma
+        # para permitir um melhor funcionamento da parelização
+        # assim, nao é mais utilizar o time.sleep, as chamadas a essa
+        # função agora aguardam
+        # isso resulta em uma falha do teste unitario
+        
+        domainsToRemove = []
+        urlToRemove = None
+        url_depth = None
+        for domain in self.dic_url_per_domain:
+            if domain.is_accessible():
+                if not self.dic_url_per_domain[domain]:
+                    domainsToRemove.append(domain)
+                    continue
+                domain.accessed_now()
+                urlToRemove = domain
                 break
+        
+        # remove empty domains
+        for domain in domainsToRemove:
+            del self.dic_url_per_domain[domain]
+
+        # remove url
+        if urlToRemove:
+            url_depth = self.dic_url_per_domain[urlToRemove][0]
 
         return url_depth
 

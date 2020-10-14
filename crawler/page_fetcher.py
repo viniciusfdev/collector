@@ -1,7 +1,9 @@
+from urllib.parse import urlparse,urljoin
+from .scheduler import Scheduler
 from bs4 import BeautifulSoup
 from threading import Thread
 import requests
-from urllib.parse import urlparse,urljoin
+import time
 
 class PageFetcher(Thread):
     def __init__(self, obj_scheduler):
@@ -31,8 +33,12 @@ class PageFetcher(Thread):
         """
         Retorna os links do conteúdo bin_str_content da página já requisitada obj_url
         """
+        # se o conteudo do html é nulo entao é retornado
+        # um conjunto vazio de urls descobertas
+        if (bin_str_content == None):
+            return []
 
-        soup = BeautifulSoup(bin_str_content, features="lxml")
+        soup = BeautifulSoup(bin_str_content.decode('utf-8', 'ignore'), features="lxml")
         for link in soup.select('a'):
             _int_depth = int_depth
             url = ""
@@ -44,6 +50,7 @@ class PageFetcher(Thread):
             
             obj_new_url = urlparse(url)
             
+            # urls relativas
             if not obj_url.netloc in url:
                 _int_depth = 0
             else:
@@ -59,7 +66,12 @@ class PageFetcher(Thread):
         url = self.obj_scheduler.get_next_url()
 
         if url == None:
-            return
+            # o page fetcher agora aguarda um tempo antes de permitir
+            # uma nova chamada, o tempo aguardado convenientemente é o
+            # mesmo tempo de limitação entre requisições do escalonador
+
+            time.sleep(Scheduler.TIME_LIMIT_BETWEEN_REQUESTS)
+            return 
 
         html = self.request_url(url[0])
         urls = self.discover_links(url[0], url[1], html)
@@ -73,7 +85,8 @@ class PageFetcher(Thread):
         
         for index, (url_link, depth) in enumerate(links):
             if (url_link != None):
-                print(": " + url_link.netloc + ": " + str(depth))
+                # print discovery urls
+                # print(": " + url_link.netloc + ": " + str(depth))
                 self.obj_scheduler.add_new_page(url_link, depth)
         
         return True
@@ -86,7 +99,6 @@ class PageFetcher(Thread):
         [self.obj_scheduler.add_new_page(url) for url in self.obj_scheduler.arr_urls_seeds]
 
         while not self.obj_scheduler.has_finished_crawl():
-            print("START NEW URL SEARCH!")
             self.crawl_new_url()
             self.obj_scheduler.count_fetched_page()
         
