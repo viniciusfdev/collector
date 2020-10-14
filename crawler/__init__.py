@@ -12,7 +12,7 @@ if __name__ == "__main__":
         "https://www.techtudo.com.br/",
         "https://canaltech.com.br/",
         "https://github.com/",
-        "https://pt.stackoverflow.com/",
+        "https://docs.python.org/3/",
         "https://pt.wix.com/",
         "https://br.wordpress.com/",
         "https://www.pathofexile.com/",
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     print("Running...")
     
     # inicia todos as threads (PageFetchers)
-    for index in range(10):
+    for index in range(110):
         fetchers.append(PageFetcher(scheduler))
         fetchers[index].start()
         

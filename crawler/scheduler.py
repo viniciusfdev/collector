@@ -97,9 +97,13 @@ class Scheduler():
         domainsToRemove = []
         urlToRemove = None
         url_depth = None
-        for domain in self.dic_url_per_domain:
+        
+        # essa variavel auxiliar é usada para evitar que a variavel iterada
+        # nao seja alterada externamente por outra thread e gere algum erro
+        dic_url_per_domain_aux = self.dic_url_per_domain.copy()
+        for domain in dic_url_per_domain_aux:
             if domain.is_accessible():
-                if not self.dic_url_per_domain[domain]:
+                if not dic_url_per_domain_aux[domain]:
                     domainsToRemove.append(domain)
                     continue
                 domain.accessed_now()
