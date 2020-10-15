@@ -53,9 +53,9 @@ if __name__ == "__main__":
     print("Limite de 1000 páginas")
     print("Profundidade limite de 6")
     print("Running...")
-    
+
     # inicia todos as threads (PageFetchers)
-    for index in range(110):
+    for index in range(130):
         fetchers.append(PageFetcher(scheduler))
         fetchers[index].start()
         
